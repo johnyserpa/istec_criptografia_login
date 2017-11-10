@@ -1,0 +1,92 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<div style="text-align:center; margin-top: 25px;">
+  <h1>
+    Login Criptográfico
+  </h1>
+</div>
+<h5 class="text-center">Aqui vamos mostrar os passos de um login encriptado</h5>
+
+<hr>
+<div class="row justify-content-md-center jumbotron">
+  <div class="col-6">
+    <form [formGroup]="loginForm" *ngIf="type == 'login'">
+      <div class="form-group">
+        <label for="lemail">Email</label>
+        <input 
+          type="lemail" 
+          class="form-control" 
+          formControlName="lemail"
+          aria-describedby="emailHelp" 
+          placeholder="Enter email">
+      </div>
+      <div class="form-group">
+        <label for="lpasswd">Password</label>
+        <input 
+          type="password" 
+          id="lpasswd" 
+          formControlName="lpasswd"
+          class="form-control" 
+          placeholder="Password">
+        <small class="form-text text-muted">We'll never share your email or password with anyone else.</small>
+      </div>
+      <div class="form-group">
+        <button 
+          (click)="onLogin()"
+          [disabled]="!loginForm.valid"
+          type="submit" 
+          class="btn btn-primary btn-block text-uppercase">Login</button>
+        <button 
+        type="button" 
+        class="btn-secondary btn btn-block btn-sm"
+        (click)="onToggleRegisterLogin()">
+        {{ buttonLabel | uppercase }}
+      </button>
+      </div>
+    </form>
+
+    <form [formGroup]="registerForm" *ngIf="type == 'register'">
+      <div class="form-group">
+        <label for="remail">Email</label>
+        <input 
+          type="email" 
+          formControlName="remail"
+          id="remail" 
+          class="form-control" 
+          aria-describedby="emailHelp" 
+          placeholder="Enter email">
+      </div>
+      <div class="form-group">
+        <label for="rpasswd">Password</label>
+        <input 
+          type="password" 
+          formControlName="rpasswd"
+          id="rpasswd" 
+          class="form-control" 
+          placeholder="Password">
+      </div>
+      <div *ngIf="type == 'register'" class="form-group">
+        <label for="rpasswd2">Confirm Password</label>
+        <input 
+          type="password" 
+          formControlName="rpasswd2"
+          id="rpasswd2" 
+          class="form-control" 
+          placeholder="Password">
+        <small class="form-text text-muted">We'll never share your email or password with anyone else.</small>
+      </div>
+      <button 
+        [disabled]="!registerForm.valid"
+        (click)="onRegister()"
+        type="submit" 
+        class="btn btn-primary btn-block text-uppercase">Register</button>
+      <button 
+      type="button" 
+      class="btn-secondary btn btn-block btn-sm"
+      (click)="onToggleRegisterLogin()">
+      {{ buttonLabel | uppercase }}
+    </button>
+    </form>
+  </div>
+</div>
+
+
