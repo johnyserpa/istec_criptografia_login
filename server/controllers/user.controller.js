@@ -1,22 +1,25 @@
 const bcrypt = require('bcrypt-nodejs');
 const mongoose = require('mongoose');
+mongoose.Promise = Promise;
 const UserSchema = require('../models/user.model');
 const User = mongoose.model('users', UserSchema);
 const session = require('express-session');
+const io = require('socket.io');
 
 const UserController = () => {
 
 	function login(req, res, next) {
 
-
 		// pegar no email e passwd
-		let email = req.body.email;
-		let passwd = req.body.passwd;
+		let email = req.body.email || null;
+		let passwd = req.body.passwd || null;
 
-		if (!email || !passwd) return res.json({
-			success: false,
-			msg: 'Email e passwd obrigatórios!'
-		});
+		if (!email || !passwd) {
+			return res.json({
+				success: false,
+				msg: 'Email e passwd obrigatórios!'
+			});
+		}
 
 
 		/**
@@ -25,11 +28,20 @@ const UserController = () => {
 		 * compara as passwords.
 		 *
 		 */
-		User.findOne({email: email}).exec((err, user) => {
+		const q = User.findOne({email: email});
+		q.exec((err, user) => {
 			if (err) {
+				console.log("User Find One Err: " + err)
 				return res.json({
 					success: false,
-					msg: 'Não existe email na bd.'
+					msg: 'BD error: ' + err
+				});
+			}
+
+			if (!user) {
+				return res.json({
+					success: false,
+					msg: "User not found."
 				});
 			}
 
@@ -69,10 +81,7 @@ const UserController = () => {
 
 		let email = req.body.email;
 		let passwd = req.body.passwd;
-		let passwd2 = req.body.passwd2;
-		let rounds = 5;
-
-		if (passwd !== passwd2) return res.send('passwrods não coincidem');
+		let rounds = 10;
 
 		bcrypt.hashSync(req.app.get('secret'));
 		bcrypt.genSalt(rounds, (err, salt) => {

@@ -7,9 +7,16 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const cors = require('cors');
+const socket_io = require('socket.io');
+const socket = require('./socket/socket');
 
 var app = express();
 app.use(cors());
+
+const io = socket_io();
+app.io = io;
+socket(io);
+
 
 /**
  *
@@ -17,7 +24,6 @@ app.use(cors());
  *
  */
 var index = require('./routes/index');
-var users = require('./routes/users');
 
 /**
  *
@@ -58,7 +64,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.use('/', index);
-app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

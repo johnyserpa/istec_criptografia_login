@@ -1,9 +1,16 @@
-var express = require('express');
-var router = express.Router();
+module.exports = function(io) {
+  var app = require('express');
+  var router = app.Router();
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
+  io.on('connection', (socket) => {
+    console.log("User connected...");
+    socket.emit('message', 'banana2');
+    console.log("Afeter emit")
+    socket.on('message', function(msg) { 
+      console.log(msg);
+    });
 
-module.exports = router;
+  })
+
+  return router;
+}
