@@ -9,6 +9,7 @@ export class AppComponent implements OnInit {
   title = 'app';
 
   form: string = 'login';
+  messages: {success: boolean, msg: string}[] = [];
 
   constructor() {}
 
@@ -18,5 +19,20 @@ export class AppComponent implements OnInit {
   toggleForms(event: string) {
     this.form = event;
   } 
+
+  onNewMessage(event: {success: boolean, msg: string}) {
+    this.messages.push(event);
+  }
+
+  getMessages() {
+    return this.messages;
+  }
+
+  clearMessages(event) {
+    console.log(event);
+    this.messages = [];
+  }
+
+
 
 }

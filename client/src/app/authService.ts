@@ -12,29 +12,24 @@ export class AuthService {
     constructor(private http: Http,
                 private socket: Socket) {}
 
-    trySocket() {
-        console.log("trying socket...")
-        this.socket.emit("message", "login", (s) => {
-            console.log("OI" + s)
-        });
-    }
-
-    socketMessage() {
-        return this.socket
-            .fromEvent<any>("message");
-    }
-
     socketHandshake() {
         return this.socket
             .fromEvent<any>("handshake");
     }
 
+    socketLoginMessages() {
+        return this.socket
+            .fromEvent<any>('login');
+    }
+
     login(email: string, passwd: string) {
-        console.log(this.url + "/login");
-        return this.http.post(this.url + "/login", {
+        console.log("Login authservice..");
+        
+        this.socket.emit('login', {
             email: email,
             passwd: passwd
         });
+
     }
 
     register (email: string, passwd) {

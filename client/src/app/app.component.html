@@ -7,12 +7,22 @@
 <h5 class="text-center">Aqui vamos mostrar os passos de um login encriptado</h5>
 
 <hr>
-<div class="row justify-content-center jumbotron">
+<div class="row jumbotron">
   <div class="col-6">
+    <app-login 
+    (newMessage)="onNewMessage($event)"
+    *ngIf="form == 'login'" 
+    (changeForm)="toggleForms($event)"></app-login>
+    <app-signup 
+    (newMessage)="onNewMessage($event)"
+    *ngIf="form == 'signup'" 
+    (changeForm)="toggleForms($event)"></app-signup>
     
-    <app-login *ngIf="form == 'login'" (changeForm)="toggleForms($event)"></app-login>
-    <app-signup *ngIf="form == 'signup'" (changeForm)="toggleForms($event)"></app-signup>
-    
+  </div>
+  <div class="col-6">
+    <app-banner
+      (onClear)="clearMessages($event)"
+      [messages]="getMessages()"></app-banner>
   </div>
 </div>
 

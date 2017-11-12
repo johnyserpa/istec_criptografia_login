@@ -16,26 +16,30 @@ export class LoginComponent implements OnInit {
 
   form: FormGroup;
   buttonLabel = 'Signup';
-  @Output() changeForm: EventEmitter<string> = new EventEmitter()
+  @Output() changeForm: EventEmitter<string> = new EventEmitter();
+  @Output() newMessage: EventEmitter<any> = new EventEmitter();
   
   constructor(private authService: AuthService) { }
 
   ngOnInit() {
     this.initializeForm();
-    this.authService.socketMessage()
-      .subscribe((message) => {
-        console.log("Message received: " + message);
-      })
 
     this.authService.socketHandshake()
       .subscribe((handshake) => {
         console.log("Handshake: " + handshake);
+      })
+
+    this.authService.socketLoginMessages()
+      .subscribe((msg) => {
+        if (!msg.success) return this.newMessage.emit(msg);;
+        this.newMessage.emit(msg);
       })
   }
 
   onChangeForm() {
     this.changeForm.emit('signup');
   }
+
 
   initializeForm() {
     this.form = new FormGroup({
@@ -44,26 +48,22 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  onLogin() {
+  async onLogin() {
+    // Get values easier.
     const values = this.form.value;
-    const hashedPasswd = this.hashPasswd(values.email, values.passwd);
-    
-    console.log(hashedPasswd);
 
-    this.authService.login(
-      values.email,
-      hashedPasswd
-    ).subscribe((res) => {
-      const data = res.json().response;
-      console.log(res.json());
+    // Alert for preparing to hash.
+    this.newMessage.emit({success: true, msg: "Preparing to hash password Md5(" + values.email + " + " + values.passwd + ")..."});
 
-      if (!res) return console.log("Login not successfull");
-      console.log(data.passwd.length, data.salt.length)
-    });
-  }
+    // Hash async passwd.
+    const hashedPasswd = await this.hashPasswd(values.email, values.passwd);
+    // Alert hashed passwd.
+    this.newMessage.emit({success: true, msg: 'Password hashed into ' + hashedPasswd + "..."});
+    this.newMessage.emit({success: true, msg: 'Sending email and password to server...'});
 
-  onSocketLogin() {
-    this.authService.trySocket();
+    this.authService.login(values.email, hashedPasswd);
+
+    this.form.reset();
   }
 
   /**
@@ -75,7 +75,11 @@ export class LoginComponent implements OnInit {
    * For now, let's just use user.email + passwd
    */
   hashPasswd(email, passwd) {
-    return Md5.hashStr(email + passwd).toString();
+    return new Promise( (resolve, reject) => {
+      setTimeout( () => {
+        resolve(Md5.hashStr(email + passwd).toString());
+      }, 1500);
+    });
   }
 
 }

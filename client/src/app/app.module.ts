@@ -9,6 +9,7 @@ import { AuthService } from './authService';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { SocketIoModule, SocketIoConfig, Socket } from 'ngx-socket-io';
+import { BannerComponent } from './banner/banner.component';
 
 const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
 
@@ -16,7 +17,8 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
   declarations: [
     AppComponent,
     LoginComponent,
-    SignupComponent
+    SignupComponent,
+    BannerComponent
   ],
   imports: [
     BrowserModule,
