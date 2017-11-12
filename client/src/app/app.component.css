@@ -1,0 +1,9 @@
+.connected {
+	position: absolute;
+	top: 25px;
+	right: 45px;
+	color: green;
+}
+.disconnected {
+	color: red !important;
+}

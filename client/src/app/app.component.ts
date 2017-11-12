@@ -10,6 +10,7 @@ export class AppComponent implements OnInit {
 
   form: string = 'login';
   messages: {success: boolean, msg: string}[] = [];
+  connected = 'lock_open';
 
   constructor() {}
 
@@ -22,6 +23,10 @@ export class AppComponent implements OnInit {
 
   onNewMessage(event: {success: boolean, msg: string}) {
     this.messages.push(event);
+  }
+
+  onConnection(event) {
+    this.connected = event;
   }
 
   getMessages() {

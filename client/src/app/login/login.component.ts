@@ -18,6 +18,7 @@ export class LoginComponent implements OnInit {
   buttonLabel = 'Signup';
   @Output() changeForm: EventEmitter<string> = new EventEmitter();
   @Output() newMessage: EventEmitter<any> = new EventEmitter();
+  @Output() connected: EventEmitter<any> = new EventEmitter();
   
   constructor(private authService: AuthService) { }
 
@@ -26,6 +27,7 @@ export class LoginComponent implements OnInit {
 
     this.authService.socketHandshake()
       .subscribe((handshake) => {
+        this.connected.emit('lock')
         console.log("Handshake: " + handshake);
       })
 
