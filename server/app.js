@@ -7,16 +7,10 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const cors = require('cors');
-const socket_io = require('socket.io');
-const socket = require('./socket/socket');
+const jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
 
 var app = express();
 app.use(cors());
-
-const io = socket_io();
-app.io = io;
-socket(io);
-
 
 /**
  *

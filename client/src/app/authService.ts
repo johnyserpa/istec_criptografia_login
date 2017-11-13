@@ -9,31 +9,20 @@ export class AuthService {
 
     url: string = 'http://localhost:3000';
 
-    constructor(private http: Http,
-                private socket: Socket) {}
-
-    socketHandshake() {
-        return this.socket
-            .fromEvent<any>("handshake");
-    }
-
-    socketLoginMessages() {
-        return this.socket
-            .fromEvent<any>('login');
-    }
+    constructor(private http: Http) {}
 
     login(email: string, passwd: string) {
         console.log("Login authservice..");
         
-        this.socket.emit('login', {
+        return this.http.post(this.url + "/login", {
             email: email,
             passwd: passwd
         });
 
     }
 
-    register (email: string, passwd) {
-        return this.http.post(this.url + "/register", {
+    signup(email: string, passwd: string) {
+        return this.http.post(this.url + "/signup", {
             email: email,
             passwd: passwd
         });

@@ -11,6 +11,7 @@ export class AppComponent implements OnInit {
   form: string = 'login';
   messages: {success: boolean, msg: string}[] = [];
   connected = 'lock_open';
+  token: string = "";
 
   constructor() {}
 
@@ -21,12 +22,9 @@ export class AppComponent implements OnInit {
     this.form = event;
   } 
 
-  onNewMessage(event: {success: boolean, msg: string}) {
+  onNewMessage(event: {success: boolean, msg: string, token?:string, response?: any}) {
     this.messages.push(event);
-  }
-
-  onConnection(event) {
-    this.connected = event;
+    if (event.token) this.token = event.token;
   }
 
   getMessages() {
@@ -36,6 +34,7 @@ export class AppComponent implements OnInit {
   clearMessages(event) {
     console.log(event);
     this.messages = [];
+    this.token = "";
   }
 
 

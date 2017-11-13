@@ -24,18 +24,6 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     this.initializeForm();
-
-    this.authService.socketHandshake()
-      .subscribe((handshake) => {
-        this.connected.emit('lock')
-        console.log("Handshake: " + handshake);
-      })
-
-    this.authService.socketLoginMessages()
-      .subscribe((msg) => {
-        if (!msg.success) return this.newMessage.emit(msg);;
-        this.newMessage.emit(msg);
-      })
   }
 
   onChangeForm() {
@@ -53,19 +41,25 @@ export class LoginComponent implements OnInit {
   async onLogin() {
     // Get values easier.
     const values = this.form.value;
+    this.form.reset();
 
     // Alert for preparing to hash.
     this.newMessage.emit({success: true, msg: "Preparing to hash password Md5(" + values.email + " + " + values.passwd + ")..."});
 
     // Hash async passwd.
-    const hashedPasswd = await this.hashPasswd(values.email, values.passwd);
-    // Alert hashed passwd.
-    this.newMessage.emit({success: true, msg: 'Password hashed into ' + hashedPasswd + "..."});
-    this.newMessage.emit({success: true, msg: 'Sending email and password to server...'});
-
-    this.authService.login(values.email, hashedPasswd);
-
-    this.form.reset();
+    this.hashPasswd(values.email, values.passwd)
+      .then((hashedPasswd: string) => {
+        // Alert hashed passwd.
+        this.newMessage.emit({success: true, msg: 'Password hashed into ' + hashedPasswd + "..."});
+        this.newMessage.emit({success: true, msg: 'Sending email and password to server...'});
+    
+        this.authService.login(values.email, hashedPasswd)
+          .subscribe((res) => {
+            res = res.json();
+            this.newMessage.emit(res);
+            console.log(res);
+          });
+      });
   }
 
   /**

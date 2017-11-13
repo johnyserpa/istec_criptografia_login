@@ -5,8 +5,13 @@ const UserSchema = require('../models/user.model');
 const User = mongoose.model('users', UserSchema);
 const session = require('express-session');
 const io = require('socket.io');
+const jwt = require('jsonwebtoken');
 
 const UserController = () => {
+
+	function log(msg) {
+		console.log('\n-------------------------------------\n\t' + msg + '\n-------------------------------------\n');
+	}
 
 	function login(req, res, next) {
 
@@ -15,6 +20,9 @@ const UserController = () => {
 		let passwd = req.body.passwd || null;
 
 		if (!email || !passwd) {
+			log('\n-------------------\
+			Email e passwd obrigatórios!\n\
+			----------------------');
 			return res.json({
 				success: false,
 				msg: 'Email e passwd obrigatórios!'
@@ -31,7 +39,7 @@ const UserController = () => {
 		const q = User.findOne({email: email});
 		q.exec((err, user) => {
 			if (err) {
-				console.log("User Find One Err: " + err)
+				log("User Find One Err: " + err)
 				return res.json({
 					success: false,
 					msg: 'BD error: ' + err
@@ -39,80 +47,153 @@ const UserController = () => {
 			}
 
 			if (!user) {
+				log("User not found!");
 				return res.json({
 					success: false,
 					msg: "User not found."
 				});
 			}
 
-			bcrypt.hashSync(req.app.get('secret'));
-			bcrypt.compare(passwd, user.passwd, (err, success) => {
-				if (err) {
-					return res.json({
-						success: false,
-						msg: 'Compare failed'
-					});
-				}
-				
+			log("Server got:\n\tEmail: " + email + "\n\tPassword: " + passwd);
+			setTimeout(() => {
+				log("Syncing secret hash into bcrypt algorithm");
+				bcrypt.hashSync(req.app.get('secret'));
 
-				if (!success) {
-					return res.json({
-						success: false,
-						msg: 'Erro, palavra-passe não está correta!'
-					});
-				}
+				setTimeout(() => {
 
-				return res.json({
-					success: true,
-					msg: "Bem sucedido",
-					response: {
-						email: user.email,
-						passwd: user.passwd,
-						salt: user.salt
-					}
-				});
-			})
+					log("Comparing encrypted passwords...");
+					bcrypt.compare(passwd, user.passwd, (err, success) => {
+						if (err) {
+							log("Compare method failed...")
+							return res.json({
+								success: false,
+								msg: 'Compare method failed...'
+							});
+						}
+						
+		
+						if (!success) {
+							log("Error. Invalid password!");
+							return res.json({
+								success: false,
+								msg: 'Error. Invalid password!'
+							});
+						}
+						
+						const payload = {
+							user: email
+						};
+						const token = jwt.sign(payload, req.app.get('secret'), {
+							expiresIn: "24h" // expires in 24 hours
+						});
+						log("Success! You have been logged in...");
+						return res.json({
+							success: true,
+							msg: "Success! You have been logged in...",
+							response: {
+								email: user.email,
+								passwd: user.passwd,
+								salt: user.salt,
+							},
+							token: token
+						});
+					})
+				}, 1500);
+			}, 1500);
 			
 		});
 
 	}
 
-	function register(req, res, next) {
+	function signup(req, res, next) {
 
 		let email = req.body.email;
 		let passwd = req.body.passwd;
 		let rounds = 10;
 
-		bcrypt.hashSync(req.app.get('secret'));
-		bcrypt.genSalt(rounds, (err, salt) => {
-			if (err) return res.send(err);
-
-			bcrypt.hash(passwd, salt, null, (err, hashedPasswd) => {
-
-				// Guardar na bd
-				let user = new User({
-					email: email,
-					passwd: hashedPasswd,
-					salt: salt,
-					rounds: rounds
-				});
-
-				user.save((err) => {
-					if (err) return res.send("BD error: " + err);
-				});
-
-				res.render('register', { 
-					passwd: passwd,
-					salt: salt,
-					hashedPasswd: hashedPasswd 
-				});
+		if (!email || !passwd) {
+			log('\n-------------------\
+			Email e passwd obrigatórios!\n\
+			----------------------');
+			return res.json({
+				success: false,
+				msg: 'Email e passwd obrigatórios!'
 			});
-		});
+		}
+
+		log("Server got:\n\tEmail: " + email + "\n\tPassword: " + passwd);
+		
+		setTimeout(() => {
+
+			log("Syncing secret key with bcrypt hash algorythm...");
+			bcrypt.hashSync(req.app.get('secret'));
+
+			setTimeout(() => {
+				log("Generating salt...");
+				bcrypt.genSalt(rounds, (err, salt) => {
+					if (err) {
+						log("Error generating salt... " + err);
+						return res.json({
+							success: false,
+							msg: "Error generating salt... " + err
+						});
+					}
+					
+					setTimeout(() => {
+						log("Salt: " + salt);
+
+						setTimeout(() => {
+							log("Hashing password with salt...");
+							bcrypt.hash(passwd, salt, null, (err, hashedPasswd) => {
+				
+								// Guardar na bd
+								let user = new User({
+									email: email,
+									passwd: hashedPasswd,
+									salt: salt,
+									rounds: rounds
+								});
+								
+								setTimeout(() => {
+									user.save((err) => {
+										if (err) {
+											log("Error saving user in database... " + err);
+											return res.json({
+												success: false,
+												msg: "BD error: " + err
+											});
+										}
+
+										const payload = {
+											user: email
+										};
+										const token = jwt.sign(payload, req.app.get('secret'), {
+											expiresIn: "24h" // expires in 24 hours
+										});
+										
+										log(`User successfully saved in database.
+										\n\tEmail: ${email}
+										\n\tPassword: ${passwd}
+										\n\tSalt: ${salt}
+										\n\tHashedPasswd: ${hashedPasswd}`);
+										res.json({ 
+											success: true,
+											msg: "User saved in database successfully!",
+											token: token
+										});
+									});
+								}, 1500);
+							});
+						}, 1500);
+					}, 1500);
+				});
+			}, 1500);
+		}, 1500);
 	}
 
 	return {
 		login: login,
-		register: register
+		signup: signup
 	}
 }
 

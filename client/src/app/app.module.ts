@@ -8,10 +8,8 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { AuthService } from './authService';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
-import { SocketIoModule, SocketIoConfig, Socket } from 'ngx-socket-io';
 import { BannerComponent } from './banner/banner.component';
 
-const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
 
 @NgModule({
   declarations: [
@@ -24,8 +22,7 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpModule,
-    SocketIoModule.forRoot(config) 
+    HttpModule
   ],
   providers: [
     AuthService

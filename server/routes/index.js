@@ -9,7 +9,7 @@ router.get('/', (req, res, next) => {
 });
 
 
-router.post('/registo', UserController.register);
+router.post('/signup', UserController.signup);
 
 router.get('/login', (req, res, next) => {
 	res.json("GET LOGIN");

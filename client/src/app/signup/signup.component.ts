@@ -17,6 +17,7 @@ export class SignupComponent implements OnInit {
   form: FormGroup;
   buttonLabel = 'Login';
   @Output() changeForm: EventEmitter<string> = new EventEmitter()
+  @Output() newMessage: EventEmitter<any> = new EventEmitter();
   
   constructor(private authService: AuthService) { }
 
@@ -38,19 +39,34 @@ export class SignupComponent implements OnInit {
 
   onRegister() {
     const values = this.form.value;
+    this.form.reset();  
 
     if (values.passwd !== values.passwd2) {
+      this.newMessage.emit({
+        success: false,
+        msg: 'Passwords don\'t match!'
+      });
       return false;
     }
 
-    const hashedPasswd = this.hashPasswd(values.email, values.passwd)
+    this.newMessage.emit({success: true, msg: "Preparing to hash password Md5(" + values.email + " + " + values.passwd + ")..."});
+    
+    this.hashPasswd(values.email, values.passwd)
+      .then((hashedPasswd: string) => {
+        // Alert hashed passwd.
+        this.newMessage.emit({success: true, msg: 'Password hashed into ' + hashedPasswd + "..."});
+        this.newMessage.emit({success: true, msg: 'Sending email and password to server...'});
 
-    this.authService.register(
-      values.email,
-      hashedPasswd
-    ).subscribe((res) => {
-      console.log(res);
-    });
+        this.authService.signup(
+          values.email,
+          hashedPasswd
+        ).subscribe((res) => {
+            res = res.json();
+            this.newMessage.emit(res);
+          console.log(res);
+        });
+      })
+
   }
 
   /**
@@ -62,7 +78,11 @@ export class SignupComponent implements OnInit {
    * For now, let's just use user.email + passwd
    */
   hashPasswd(email, passwd) {
-    return Md5.hashStr(email + passwd).toString();
+    return new Promise( (resolve, reject) => {
+      setTimeout( () => {
+        resolve(Md5.hashStr(email + passwd).toString());
+      }, 1500);
+    });
   }
 
 }

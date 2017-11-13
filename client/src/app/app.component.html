@@ -6,12 +6,11 @@
 </div>
 <h5 class="text-center">This is a secure login example.</h5>
 <p class="text-center">A socket connection is established at the beggining in order to get server feedback.</p>
-<i [class.disconnected]="connected == 'lock_open'" class="material-icons connected">{{ connected }}</i>
+<!--<i [class.disconnected]="connected == 'lock_open'" class="material-icons connected">{{ connected }}</i>-->
 <hr>
 <div class="row jumbotron">
   <div class="col-6">
     <app-login 
-    (connected)="onConnection($event)"
     (newMessage)="onNewMessage($event)"
     *ngIf="form == 'login'" 
     (changeForm)="toggleForms($event)"></app-login>
@@ -24,6 +23,7 @@
   <div class="col-6">
     <app-banner
       (onClear)="clearMessages($event)"
+      [token]="token"
       [messages]="getMessages()"></app-banner>
   </div>
 </div>

@@ -9,6 +9,7 @@ import { Component, ViewEncapsulation, Input, Output, EventEmitter } from '@angu
 export class BannerComponent {
 
   @Input('messages') messages: {success: boolean, msg: string}[] = [];
+  @Input('token') token: string = "";
   /*msgs: {success: boolean, msg: string}[] = [];
   @Input('messages') set messages(msg) {
     console.log(msg, this.msgs)

@@ -8,4 +8,8 @@
     *ngFor="let msg of messages" 
     [ngClass]="(msg.success == true) ? 'alert-success' : 'alert-danger'"
     class="alert">- {{ msg.msg }}</p>
+
+  <p
+    *ngIf="token"
+    class="alert alert-info">Congratulations! Your session token is: <strong>{{ token }}</strong></p>
 </div>
