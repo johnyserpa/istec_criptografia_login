@@ -33,7 +33,7 @@ app.use(session({
  * Connection to database.
  *
  */
-mongoose.connect('mongodb://localhost/criptografia', {
+mongoose.connect('mongodb://heroku_gqxnwk4l:gmifaqohe7vupiqqmt2ogd7ron@ds113626.mlab.com:13626/heroku_gqxnwk4l', {
 	useMongoClient: true
 });
 
