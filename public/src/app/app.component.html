@@ -1,0 +1,31 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<div style="text-align:center; margin-top: 25px;">
+  <h1>
+    Secure Login
+  </h1>
+</div>
+<h5 class="text-center">This is a secure login example.</h5>
+<p class="text-center"></p>
+<!--<i [class.disconnected]="connected == 'lock_open'" class="material-icons connected">{{ connected }}</i>-->
+<hr>
+<div class="row jumbotron">
+  <div class="col-6">
+    <app-login 
+    (newMessage)="onNewMessage($event)"
+    *ngIf="form == 'login'" 
+    (changeForm)="toggleForms($event)"></app-login>
+    <app-signup 
+    (newMessage)="onNewMessage($event)"
+    *ngIf="form == 'signup'" 
+    (changeForm)="toggleForms($event)"></app-signup>
+    
+  </div>
+  <div class="col-6">
+    <app-banner
+      (onClear)="clearMessages($event)"
+      [token]="token"
+      [messages]="getMessages()"></app-banner>
+  </div>
+</div>
+
+
