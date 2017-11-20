@@ -23,6 +23,10 @@
     "socket.io": "^2.0.4",
 
 
+    "@angular/cli": "1.5.0",
+    "@angular/animations": "^5.0.0",
+    "@angular/common": "^5.0.0",
+    "@angular/compiler": "^5.0.0",
     "@angular/compiler-cli": "^5.0.0"
   }
 }
