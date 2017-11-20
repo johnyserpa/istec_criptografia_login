@@ -1,5 +1,5 @@
 {
-  "$schema": "./public/node_modules/@angular/cli/lib/config/schema.json",
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "project": {
     "name": "client"
   },
@@ -19,13 +19,13 @@
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
       "styles": [
-        "./public/node_modules/bootstrap/dist/css/bootstrap.min.css",
+        "../node_modules/bootstrap/dist/css/bootstrap.min.css",
         "styles.css"
       ],
       "scripts": [
-        "./public/node_modules/jquery/dist/jquery.min.js",
-        "./public/node_modules/tether/dist/js/tether.min.js",  
-        "./public/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+        "../node_modules/jquery/dist/jquery.min.js",
+        "../node_modules/tether/dist/js/tether.min.js",  
+        "../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {
